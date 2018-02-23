@@ -11,6 +11,7 @@ import org.apache.zookeeper.Watcher.Event.EventType;
 import org.apache.zookeeper.Watcher.Event.KeeperState;
 import org.apache.zookeeper.ZooDefs.Ids;
 import org.apache.zookeeper.ZooKeeper;
+import org.apache.zookeeper.data.Stat;
 
 /**
  * @autor binge
@@ -50,13 +51,40 @@ public class ZookeeperAPIDemo {
 		return zk;
 	}
 
-	public static void createNode() throws IOException, KeeperException, InterruptedException {
+	public static void createPresisitentNode() throws IOException, KeeperException, InterruptedException {
 		ZooKeeper zooKeeper = getZookeeper();
 		zooKeeper.create("/root", "root data".getBytes(), Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
 	}
 
+	public static void createPresisitentSequentialNode() throws IOException, KeeperException, InterruptedException {
+		ZooKeeper zooKeeper = getZookeeper();
+		zooKeeper.create("/root/app", "sequential data".getBytes(), Ids.OPEN_ACL_UNSAFE,
+				CreateMode.PERSISTENT_SEQUENTIAL);
+	}
+
+	public static void createEphemeralNode() throws IOException, KeeperException, InterruptedException {
+		ZooKeeper zooKeeper = getZookeeper();
+		zooKeeper.create("/root/app1", "app1 data".getBytes(), Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
+	}
+
+	public static void setData() throws IOException, InterruptedException, KeeperException {
+		ZooKeeper zooKeeper = getZookeeper();
+		zooKeeper.setData("/root", "root data v3".getBytes(), 1);
+	}
+
+	public static void getData() throws IOException, InterruptedException, KeeperException {
+		ZooKeeper zooKeeper = getZookeeper();
+		Stat stat = new Stat();
+		byte data[] = zooKeeper.getData("/root", false, stat);
+		System.out.println("getData finish!" + new String(data));
+	}
+
 	public static void main(String[] args) throws IOException, KeeperException, InterruptedException {
-		ZookeeperAPIDemo.createNode();
+		// ZookeeperAPIDemo.createPresisitentNode();
+		// ZookeeperAPIDemo.createEphemeralNode();
+		// ZookeeperAPIDemo.createPresisitentSequentialNode();
+		// ZookeeperAPIDemo.setData();
+		ZookeeperAPIDemo.getData();
 		System.out.println("createNode finish!");
 	}
 }
